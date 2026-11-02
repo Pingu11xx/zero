@@ -120,7 +120,7 @@
     <main class="relative z-10 flex-grow max-w-7xl w-full mx-auto px-4 lg:px-8 py-8 flex flex-col gap-12">
         <section class="text-center py-8 md:py-12 relative flex flex-col items-center">
             
-            <div class="w-32 h-32 md:w-40 md:h-40 rounded-2xl bg-black/60 border-2 border-zero-accent p-2 shadow-[0_0_30px_rgba(212,175,55,0.3)] mb-6 flex items-center justify-center backdrop-blur-sm overflow-hidden cursor-pointer" onclick="zoomImage('logo.png', 'ZERO Frakció Embléma')">
+            <div class="w-32 h-32 md:w-40 md:h-40 rounded-2xl bg-black/60 border-2 border-zero-accent p-2 shadow-[0_0_30px_rgba(212,175,55,0.3)] mb-6 flex items-center justify-center backdrop-blur-sm overflow-hidden cursor-pointer" onclick="zoomImage('zero_logo.png', 'ZERO Frakció Embléma')">
                 <img src="zero_logo.png" alt="ZERO Emblem" class="w-full h-full object-contain">
             </div>
             
@@ -181,6 +181,7 @@
             <div id="rosterGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
         </section>
 
+        <!-- GALÉRIA SZEKCIÓ -->
         <section class="space-y-6 pt-6">
             <div class="pb-4 border-b border-zero-border flex justify-between items-center">
                 <h2 class="font-orbitron text-2xl font-bold text-white tracking-wider flex items-center gap-3">
@@ -190,31 +191,8 @@
                 <span class="text-xs text-gray-400">Pillanatképek az életről</span>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="group relative rounded-xl overflow-hidden border border-zero-border bg-zero-card h-52 cursor-pointer" onclick="zoomImage('zazidroxy.png', 'Buzi rákászok')">
-                    <img src="zazidroxy.png" alt="Rákászok" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-80 group-hover:opacity-100">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent p-4 flex flex-col justify-end">
-                        <span class="text-xs text-zero-accent font-semibold font-orbitron">Bolondos rákászat</span>
-                        <h4 class="text-sm font-bold text-white">Szerlemes rákászok</h4>
-                    </div>
-                </div>
-
-                <div class="group relative rounded-xl overflow-hidden border border-zero-border bg-zero-card h-52 cursor-pointer" onclick="zoomImage('akcio.png', 'Területfoglalás csapatkép')">
-                    <img src="akcio.png" alt="akcio" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-80 group-hover:opacity-100">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent p-4 flex flex-col justify-end">
-                        <span class="text-xs text-zero-accent font-semibold font-orbitron">Akció</span>
-                        <h4 class="text-sm font-bold text-white">Területfoglalásra menet</h4>
-                    </div>
-                </div>
-
-                <div class="group relative rounded-xl overflow-hidden border border-zero-border bg-zero-card h-52 cursor-pointer" onclick="zoomImage('zekipdleader.png', 'Új PD leader')">
-                    <img src="zekipdleader.png" alt="Pd leader lettem" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-80 group-hover:opacity-100">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent p-4 flex flex-col justify-end">
-                        <span class="text-xs text-zero-accent font-semibold font-orbitron">Hatalom átvétel</span>
-                        <h4 class="text-sm font-bold text-white">PD ceremónia lefúrva</h4>
-                    </div>
-                </div>
-            </div>
+            <!-- Ide generálódnak automatikusan a galéria képei -->
+            <div id="galleryGrid" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
         </section>
     </main>
 
@@ -222,7 +200,6 @@
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500">
             <div class="flex items-center gap-2">
                 <span class="font-orbitron font-bold text-zero-accent">Z-E-R-O</span>
-               
             </div>
             <div>
                 &copy; 2026 ZERO Faction. Minden jog fenntartva.
@@ -428,6 +405,30 @@
     </div>
 
     <script>
+        // =========================================================================
+        // ITT TUDOD BŐVÍTENI A GALÉRIÁT EGYSZERŰEN!
+        // Csak adj hozzá egy új sort: { image: "kep_neve.png", category: "Kategória", title: "Cím" },
+        // =========================================================================
+        const galleryData = [
+            { 
+                image: "zazidroxy.png", 
+                category: "Bolondos rákászat", 
+                title: "Szerlemes rákászok" 
+            },
+            { 
+                image: "akcio.png", 
+                category: "Akció", 
+                title: "Területfoglalásra menet" 
+            },
+            { 
+                image: "zekipdleader.png", 
+                category: "Hatalom átvétel", 
+                title: "PD ceremónia lefúrva" 
+            }
+            // HA ÚJ KÉPET AKARSZ, IDE IS BEMÁSOLHATOD A KÖVETKEZŐT (ne feledd a vesszőt az előző sor végén!):
+            // { image: "ujkep.png", category: "Kategória", title: "Cím" }
+        ];
+
         const rosterData = [
             { id: 1, name: "Tom Cross", role: "Leader", roleClass: "role-leader", discord: "benoke97", image: "", bio:"Nika 2nd karija vagyok hihi"},
             { id: 2, name: "Veronika Volkovna", role: "Al leader", roleClass: "role-subleader", discord: "renipuff", image: "", bio:"Fuj fuj life less streamer, borzalmas al-leader " },
@@ -472,6 +473,27 @@
             } else {
                 icon.className = 'fa-solid fa-volume-xmark text-gray-500';
             }
+        }
+
+        function renderGallery() {
+            const grid = document.getElementById("galleryGrid");
+            if (!grid) return;
+            grid.innerHTML = "";
+
+            galleryData.forEach(item => {
+                const card = document.createElement("div");
+                card.className = "group relative rounded-xl overflow-hidden border border-zero-border bg-zero-card h-52 cursor-pointer";
+                card.onclick = () => zoomImage(item.image, item.title);
+
+                card.innerHTML = `
+                    <img src="${item.image}" alt="${item.title}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-80 group-hover:opacity-100">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent p-4 flex flex-col justify-end">
+                        <span class="text-xs text-zero-accent font-semibold font-orbitron">${item.category}</span>
+                        <h4 class="text-sm font-bold text-white">${item.title}</h4>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
         }
 
         function renderRoster(items) {
@@ -582,7 +604,7 @@
 
         function zoomMemberAvatar(name, imgUrl) {
             playSfx(600, 'triangle');
-            const targetSrc = imgUrl || 'logo.png'; 
+            const targetSrc = imgUrl || 'zero_logo.png'; 
             zoomImage(targetSrc, name + ' Profilképe');
         }
 
@@ -632,20 +654,18 @@
             e.preventDefault();
             playSfx(700, 'triangle');
 
-            // --- ITT KEZDŐDIK A DISCORD WEBHOOK KÜLDÉS ---
             const inputs = e.target.elements;
             const icName = inputs[0].value;
             const discordUser = inputs[1].value;
             const reason = inputs[2].value;
 
-            // Cseréld ki a lenti linket a saját Discord Webhook linkedre:
-            const WEBHOOK_URL = "https://discord.com/api/webhooks/1566856143781892230/-W54yNoQQevR3xVXp7oVe4xJyMnE-IM5e3bRzW8CjP5jNu3FZ1GCm6lYdJb8B-XgZc6n"; 
+            const WEBHOOK_URL = "https://discord.com/api/webhooks/1566856143781892230/-W54yNoQQevR3xVXp7oVe4xJyMnE-IM5e3bRzw8CjP5jNu3FZ1GCm6lYdJb8B-XgZc6n"; 
 
             if (WEBHOOK_URL !== "ITT_ADD_MEG_A_DISCORD_WEBHOOK_LINKEDET") {
                 const payload = {
                     embeds: [{
                         title: "📥 Új Frakció Jelentkezés",
-                        color: 13936439, // Aranyos/sárgás díszszín
+                        color: 13936439,
                         fields: [
                             { name: "IC Név", value: icName, inline: true },
                             { name: "Discord", value: discordUser, inline: true },
@@ -655,14 +675,12 @@
                     }]
                 };
 
-            
                 fetch(WEBHOOK_URL, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(payload)
                 }).catch(err => console.error("Webhook hiba:", err));
             }
-            // --- WEBHOOK KÜLDÉS VÉGE ---
 
             document.getElementById('applyForm').classList.add('hidden');
             document.getElementById('applySuccess').classList.remove('hidden');
@@ -737,6 +755,7 @@
             initParticles();
             animateParticles();
             renderRoster(rosterData);
+            renderGallery(); // Betölti a galériát automatikusan
         };
 
         window.onresize = function() {
