@@ -687,11 +687,13 @@
             const discordUser = inputs[1].value;
             const reason = inputs[2].value;
 
-            const WEBHOOK_URL = "https://discord.com/api/webhooks/1566856143781892230/-W54yNoQQevR3xVXp7oVe4xJyMnE-IM5e3bRzw8CjP5jNu3FZ1GCm6lYdJb8B-XgZc6n"; 
+            const WEBHOOK_URL = "https://discord.com/api/webhooks/1566856143781892230/-W54yNoQQevR3xVXp7oVe4xJyMnE-IM5e3bRzW8CjP5jNu3FZ1GCm6lYdJb8B-XgZc6n"; 
 
             if (WEBHOOK_URL !== "ITT_ADD_MEG_A_DISCORD_WEBHOOK_LINKEDET") {
                 const payload = {
-                    content: "<@&1367489918372286564>",
+                    title: "📥 Új Frakció Jelentkezés",
+                    description: "<@&1367489918372286564> Figyelem, új jelentkezés érkezett!",
+                    color: 13936439,
                     embeds: [{
                         title: "📥 Új Frakció Jelentkezés",
                         color: 13936439,
