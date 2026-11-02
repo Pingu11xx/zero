@@ -191,7 +191,6 @@
                 <span class="text-xs text-gray-400">Pillanatképek az életről</span>
             </div>
 
-            <!-- Ide generálódnak automatikusan a galéria képei -->
             <div id="galleryGrid" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
         </section>
     </main>
@@ -231,7 +230,7 @@
 
             <div class="flex border-b border-zero-border bg-black/40 px-6 gap-6 text-sm font-semibold">
                 <button onclick="switchTab('tabOverview')" id="tabOverviewBtn" class="py-3 text-zero-accent border-b-2 border-zero-accent transition-all">Profil & Bio</button>
-                <button onclick="switchTab('tabOoc')" id="tabOocBtn" class="py-3 text-gray-400 border-b-2 border-transparent hover:text-white transition-all">OOC / Discord</button>
+                <button onclick="switchTab('tabOoc')" id="tabOocBtn" class="py-3 text-gray-400 border-b-2 border-transparent hover:text-white transition-all">OOC / Elérhetőségek</button>
             </div>
 
             <div class="p-6">
@@ -243,15 +242,28 @@
                 </div>
 
                 <div id="tabOoc" class="space-y-4 hidden">
+                    <!-- Discord doboz -->
                     <div class="p-4 rounded-lg bg-black/40 border border-zero-border flex items-center justify-between">
                         <div>
-                            <span class="text-xs text-gray-400 uppercase font-semibold">Alkotó Discord Elérhetősége</span>
+                            <span class="text-xs text-gray-400 uppercase font-semibold">Discord Elérhetőség</span>
                             <div id="charDiscord" class="text-lg font-orbitron font-bold text-indigo-400 mt-1"></div>
                         </div>
                         <button onclick="copyDiscord()" class="px-3 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold flex items-center gap-2 transition-all">
                             <i class="fa-solid fa-copy"></i>
                             <span id="copyBtnText">Másolás</span>
                         </button>
+                    </div>
+
+                    <!-- Kick doboz (Csak akkor jelenik meg, ha van Kick link beállítva a tagnál) -->
+                    <div id="kickBox" class="p-4 rounded-lg bg-black/40 border border-zero-border flex items-center justify-between hidden">
+                        <div>
+                            <span class="text-xs text-gray-400 uppercase font-semibold">Élő Adás / Kick Stream</span>
+                            <div id="charKickText" class="text-lg font-orbitron font-bold text-emerald-400 mt-1">Kick Csatorna</div>
+                        </div>
+                        <a id="charKickLink" href="#" target="_blank" class="px-3 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold flex items-center gap-2 transition-all">
+                            <i class="fa-solid fa-video"></i>
+                            <span>Megtekintés</span>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -405,10 +417,6 @@
     </div>
 
     <script>
-        // =========================================================================
-        // ITT TUDOD BŐVÍTENI A GALÉRIÁT EGYSZERŰEN!
-        // Csak adj hozzá egy új sort: { image: "kep_neve.png", category: "Kategória", title: "Cím" },
-        // =========================================================================
         const galleryData = [
             { 
                 image: "zazidroxy.png", 
@@ -424,19 +432,21 @@
                 image: "zekipdleader.png", 
                 category: "Hatalom átvétel", 
                 title: "PD ceremónia lefúrva" 
-            },
-            // HA ÚJ KÉPET AKARSZ, IDE IS BEMÁSOLHATOD A KÖVETKEZŐT (ne feledd a vesszőt az előző sor végén!):
-            // { image: "ujkep.png", category: "Kategória", title: "Cím" }
-            {
-                image: "partoncsapat.png",
-                category:"Csapat",
-                title:"Parton csapatkép"
             }
         ];
 
         const rosterData = [
             { id: 1, name: "Tom Cross", role: "Leader", roleClass: "role-leader", discord: "benoke97", image: "", bio:"Nika 2nd karija vagyok hihi"},
-            { id: 2, name: "Veronika Volkovna", role: "Al leader", roleClass: "role-subleader", discord: "renipuff", image: "", bio:"Fuj fuj life less streamer, borzalmas al-leader " },
+            { 
+                id: 2, 
+                name: "Veronika Volkovna", 
+                role: "Al leader", 
+                roleClass: "role-subleader", 
+                discord: "renipuff", 
+                kick: "https://kick.com/renipuff", // <--- ITT TUDOD BEÁLLÍTANI A KICK LINKET (ha törlöd vagy üresen hagyod "", akkor nem jelenik meg)
+                image: "", 
+                bio:"Fuj fuj life less streamer, borzalmas al-leader " 
+            },
             { id: 3, name: "Darius Jahlani Hayes", role: "Bizalmas", roleClass: "role-inner", discord: "botiirko", image: "", bio:"csak a pp mindent be pp-zünk nem szeretek farmolni köszi xdd" },
             { id: 4, name: "Zeki Malik Karatas", role: "Bizalmas", roleClass: "role-inner", discord: "milan0955", image: "zeki.png", bio:"le az al-leaderrel" },
             { id: 5, name: "Matteo Bianchi", role: "Bizalmas", roleClass: "role-inner", discord: "zazzziii62", image: "", bio:"le az al-leaderrel" },
@@ -517,6 +527,9 @@
                     ? `<img src="${m.image}" alt="${m.name}" class="w-full h-full object-cover rounded-lg">` 
                     : `<i class="fa-solid fa-user-ninja"></i>`;
 
+                // Kis jelzés a kártyán, ha van Kick csatornája
+                const kickBadge = m.kick ? `<span class="text-emerald-400 ml-2" title="Kick Streamer"><i class="fa-solid fa-video"></i></span>` : '';
+
                 card.innerHTML = `
                     <div class="flex justify-between items-start mb-4">
                         <div class="w-12 h-12 rounded-lg bg-black border border-zero-border group-hover:border-zero-accent flex items-center justify-center text-xl text-gray-400 group-hover:text-zero-accent transition-colors overflow-hidden hover:scale-110" title="Kattints a nagyításhoz" onclick="event.stopPropagation(); zoomMemberAvatar('${m.name}', '${m.image}')">
@@ -526,7 +539,7 @@
                     </div>
 
                     <div>
-                        <h3 class="font-orbitron font-bold text-lg text-white group-hover:text-zero-accent transition-colors">${m.name}</h3>
+                        <h3 class="font-orbitron font-bold text-lg text-white group-hover:text-zero-accent transition-colors">${m.name} ${kickBadge}</h3>
                     </div>
 
                     <div class="mt-4 pt-4 border-t border-zero-border/60 flex items-center justify-between text-xs text-gray-400">
@@ -584,6 +597,19 @@
             document.getElementById("charRoleBadge").className = `text-xs font-bold px-2.5 py-0.5 rounded uppercase tracking-wider ${member.roleClass}`;
             document.getElementById("charBio").innerText = member.bio;
             document.getElementById("charDiscord").innerText = member.discord;
+
+            // Kick kezelése a modálban
+            const kickBox = document.getElementById("kickBox");
+            const charKickLink = document.getElementById("charKickLink");
+            const charKickText = document.getElementById("charKickText");
+
+            if (member.kick) {
+                charKickLink.href = member.kick;
+                charKickText.innerText = member.name + " Kick csatornája";
+                kickBox.classList.remove("hidden");
+            } else {
+                kickBox.classList.add("hidden");
+            }
 
             const modalDefaultIcon = document.getElementById("modalDefaultIcon");
             const modalAvatarImg = document.getElementById("modalAvatarImg");
@@ -732,7 +758,7 @@
             }
         }
 
-        function initParticles() {
+        function initParticles()isan {
             particles = [];
             const count = Math.floor(window.innerWidth / 15);
             for (let i = 0; i < count; i++) {
@@ -760,7 +786,7 @@
             initParticles();
             animateParticles();
             renderRoster(rosterData);
-            renderGallery(); // Betölti a galériát automatikusan
+            renderGallery();
         };
 
         window.onresize = function() {
