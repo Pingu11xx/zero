@@ -191,6 +191,7 @@
                 <span class="text-xs text-gray-400">Pillanatképek az életről</span>
             </div>
 
+            <!-- Ide generálódnak automatikusan a galéria képei -->
             <div id="galleryGrid" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
         </section>
     </main>
@@ -415,6 +416,10 @@
     </div>
 
     <script>
+        // =========================================================================
+        // ITT TUDOD BŐVÍTENI A GALÉRIÁT EGYSZERŰEN!
+        // Csak adj hozzá egy új sort: { image: "kep_neve.png", category: "Kategória", title: "Cím" },
+        // =========================================================================
         const galleryData = [
             { 
                 image: "zazidroxy.png", 
@@ -430,6 +435,26 @@
                 image: "zekipdleader.png", 
                 category: "Hatalom átvétel", 
                 title: "PD ceremónia lefúrva" 
+            },
+            {
+                image: "fureszkoindul.png", 
+                category: "furesz", 
+                title: "furaska" 
+            },
+            {
+                image: "nevagjeretreniszeret.png", 
+                category: "reni", 
+                title: "Be happy" 
+            },
+            {
+                image: "zazika.png", 
+                category: "zazzantyú", 
+                title: "Cuki homeless Zazi" 
+            },
+            {
+                image: "aigeneraltreni.png", 
+                category: "reni", 
+                title: "Légy AI" 
             }
         ];
 
@@ -691,9 +716,6 @@
 
             if (WEBHOOK_URL !== "ITT_ADD_MEG_A_DISCORD_WEBHOOK_LINKEDET") {
                 const payload = {
-                    title: "📥 Új Frakció Jelentkezés",
-                    description: "<@&1367489918372286564> Figyelem, új jelentkezés érkezett!",
-                    color: 13936439,
                     embeds: [{
                         title: "📥 Új Frakció Jelentkezés",
                         color: 13936439,
