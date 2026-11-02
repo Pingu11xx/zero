@@ -242,7 +242,6 @@
                 </div>
 
                 <div id="tabOoc" class="space-y-4 hidden">
-                    <!-- Discord doboz -->
                     <div class="p-4 rounded-lg bg-black/40 border border-zero-border flex items-center justify-between">
                         <div>
                             <span class="text-xs text-gray-400 uppercase font-semibold">Discord Elérhetőség</span>
@@ -254,7 +253,6 @@
                         </button>
                     </div>
 
-                    <!-- Kick doboz (Csak akkor jelenik meg, ha van Kick link beállítva a tagnál) -->
                     <div id="kickBox" class="p-4 rounded-lg bg-black/40 border border-zero-border flex items-center justify-between hidden">
                         <div>
                             <span class="text-xs text-gray-400 uppercase font-semibold">Élő Adás / Kick Stream</span>
@@ -443,7 +441,7 @@
                 role: "Al leader", 
                 roleClass: "role-subleader", 
                 discord: "renipuff", 
-                kick: "https://kick.com/renipuff", // <--- ITT TUDOD BEÁLLÍTANI A KICK LINKET (ha törlöd vagy üresen hagyod "", akkor nem jelenik meg)
+                kick: "https://kick.com/renipuff", 
                 image: "", 
                 bio:"Fuj fuj life less streamer, borzalmas al-leader " 
             },
@@ -513,6 +511,7 @@
 
         function renderRoster(items) {
             const grid = document.getElementById("rosterGrid");
+            if (!grid) return;
             grid.innerHTML = "";
 
             items.forEach((m) => {
@@ -527,7 +526,6 @@
                     ? `<img src="${m.image}" alt="${m.name}" class="w-full h-full object-cover rounded-lg">` 
                     : `<i class="fa-solid fa-user-ninja"></i>`;
 
-                // Kis jelzés a kártyán, ha van Kick csatornája
                 const kickBadge = m.kick ? `<span class="text-emerald-400 ml-2" title="Kick Streamer"><i class="fa-solid fa-video"></i></span>` : '';
 
                 card.innerHTML = `
@@ -598,7 +596,6 @@
             document.getElementById("charBio").innerText = member.bio;
             document.getElementById("charDiscord").innerText = member.discord;
 
-            // Kick kezelése a modálban
             const kickBox = document.getElementById("kickBox");
             const charKickLink = document.getElementById("charKickLink");
             const charKickText = document.getElementById("charKickText");
@@ -758,7 +755,7 @@
             }
         }
 
-        function initParticles()isan {
+        function initParticles() {
             particles = [];
             const count = Math.floor(window.innerWidth / 15);
             for (let i = 0; i < count; i++) {
