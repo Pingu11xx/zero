@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Z-E-R-O | Galaxy RP</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        zero: {
+                            bg: '#08080a',
+                            card: '#111216',
+                            border: '#232630',
+                            accent: '#d4af37',
+                            accentGlow: 'rgba(212, 175, 55, 0.4)',
+                            silver: '#c0c0c0',
+                            crimson: '#e63946'
+                        }
+                    },
+                    fontFamily: {
+                        orbitron: ['Orbitron', 'sans-serif'],
+                        rajdhani: ['Rajdhani', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #08080a;
+            color: #e2e8f0;
+            font-family: 'Rajdhani', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .glow-text {
+            text-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
+        }
+        .glow-box-hover:hover {
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.35);
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #08080a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #232630;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #d4af37;
+        }
+
+        #particleCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .role-leader { background: rgba(212, 175, 55, 0.15); color: #d4af37; border: 1px solid #d4af37; }
+        .role-subleader { background: rgba(192, 192, 192, 0.15); color: #c0c0c0; border: 1px solid #c0c0c0; }
+        .role-inner { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid #c084fc; }
+        .role-member { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid #60a5fa; }
+    </style>
+</head>
+<body class="relative min-h-screen flex flex-col selection:bg-zero-accent selection:text-black">
+
+    <canvas id="particleCanvas"></canvas>
+    <div id="cursorDot" class="cursor-dot hidden md:block"></div>
+
+    <header class="sticky top-0 z-50 bg-zero-bg/90 backdrop-blur-md border-b border-zero-border px-4 lg:px-8 py-3 transition-all">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <!-- Brand Logo -->
+            <div class="flex items-center gap-3 group cursor-pointer" onclick="scrollToTop()">
+                <div class="w-12 h-12 rounded-lg bg-black border border-zero-accent flex items-center justify-center p-1 shadow-[0_0_15px_rgba(212,175,55,0.3)] group-hover:scale-105 transition-transform overflow-hidden">
+                    <img src="zero_logo.png" alt="ZERO Logo" class="w-full h-full object-contain">
+                </div>
+                <div class="font-orbitron text-xl md:text-2xl font-black tracking-[0.3em] text-white">
+                    Z<span class="text-zero-accent">-</span>E<span class="text-zero-accent">-</span>R<span class="text-zero-accent">-</span>O
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3 md:gap-5">
+                <button id="soundToggle" onclick="toggleSound()" class="p-2.5 px-3 rounded-lg bg-zero-card border border-zero-border text-gray-300 hover:text-zero-accent hover:border-zero-accent transition-all text-sm flex items-center gap-2" title="Hanghatások Be/Ki">
+                    <i id="soundIcon" class="fa-solid fa-volume-high text-zero-accent"></i>
+                    <span class="hidden sm:inline text-xs font-semibold">SFX</span>
+                </button>
+
+                <button onclick="openModal('rulesModal')" class="px-4 py-2 rounded-lg bg-zero-card border border-zero-border text-white hover:border-zero-accent hover:text-zero-accent transition-all text-sm font-semibold flex items-center gap-2">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span class="hidden sm:inline">Szabályzat</span>
+                </button>
+
+                <a href="https://galaxyrp.hu" target="_blank" class="px-4 py-2 rounded-lg bg-zero-accent text-black font-orbitron font-bold text-xs md:text-sm hover:bg-yellow-400 transition-all flex items-center gap-2 shadow-[0_0_15px_rgba(212,175,55,0.4)]">
+                    <i class="fa-solid fa-gamepad"></i>
+                    <span>GALAXY RP</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="relative z-10 flex-grow max-w-7xl w-full mx-auto px-4 lg:px-8 py-8 flex flex-col gap-12">
+        <section class="text-center py-8 md:py-12 relative flex flex-col items-center">
+            
+            <div class="w-32 h-32 md:w-40 md:h-40 rounded-2xl bg-black/60 border-2 border-zero-accent p-2 shadow-[0_0_30px_rgba(212,175,55,0.3)] mb-6 flex items-center justify-center backdrop-blur-sm overflow-hidden cursor-pointer" onclick="zoomImage('logo.png', 'ZERO Frakció Embléma')">
+                <img src="zero_logo.png" alt="ZERO Emblem" class="w-full h-full object-contain">
+            </div>
+            
+            <h1 class="font-orbitron text-4xl sm:text-6xl md:text-7xl font-black uppercase tracking-widest text-white mb-4">
+                Z <span class="text-zero-accent glow-text">E</span> R <span class="text-zero-accent glow-text">O</span>
+            </h1>
+            
+            <p class="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto font-medium tracking-wide mb-8">
+                Diszkréció <span class="text-zero-accent">•</span> Lojalitás <span class="text-zero-accent">•</span> Fegyelem
+            </p>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl w-full bg-zero-card/80 backdrop-blur-md border border-zero-border p-4 rounded-xl shadow-xl">
+                <div class="p-3 border-r border-zero-border/50 last:border-0">
+                    <div class="text-xs text-gray-400 font-semibold uppercase">Frakció Létszám</div>
+                    <div class="font-orbitron text-xl md:text-2xl font-bold text-zero-accent mt-1">9 / 12</div>
+                </div>
+                <div class="p-3 border-r border-zero-border/50 last:border-0">
+                    <div class="text-xs text-gray-400 font-semibold uppercase">Szabad Slotok</div>
+                    <div class="font-orbitron text-xl md:text-2xl font-bold text-emerald-400 mt-1">3 Slot</div>
+                </div>
+                <div class="p-3 border-r border-zero-border/50 last:border-0">
+                    <div class="text-xs text-gray-400 font-semibold uppercase">Státusz</div>
+                    <div class="font-orbitron text-xl md:text-2xl font-bold text-white mt-1">AKTÍV</div>
+                </div>
+                <div class="p-3">
+                    <div class="text-xs text-gray-400 font-semibold uppercase">Szerver</div>
+                    <div class="font-orbitron text-xl md:text-2xl font-bold text-zero-silver mt-1">GALAXY RP</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="rosterSection" class="space-y-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b border-zero-border">
+                <div>
+                    <h2 class="font-orbitron text-2xl md:text-3xl font-extrabold text-white tracking-wider flex items-center gap-3">
+                        <i class="fa-solid fa-users text-zero-accent"></i>
+                        <span>FRAKCIÓ ROSTER</span>
+                    </h2>
+                    <p class="text-xs md:text-sm text-gray-400 mt-1">Kattints a kártyára az adatlapért, vagy a profilképre a kinagyításhoz!</p>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                    <div class="relative flex-grow md:w-64">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm"></i>
+                        <input type="text" id="searchInput" oninput="filterRoster()" placeholder="Keresés név vagy rang alapján..." class="w-full bg-zero-card border border-zero-border rounded-lg pl-9 pr-4 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-zero-accent transition-all">
+                    </div>
+
+                    <select id="roleFilter" onchange="filterRoster()" class="bg-zero-card border border-zero-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-zero-accent transition-all">
+                        <option value="ALL">Összes Rang</option>
+                        <option value="Leader">Leader</option>
+                        <option value="Al leader">Al leader</option>
+                        <option value="Bizalmas">Bizalmas</option>
+                        <option value="Tag">Tag</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="rosterGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+        </section>
+
+        <section class="space-y-6 pt-6">
+            <div class="pb-4 border-b border-zero-border flex justify-between items-center">
+                <h2 class="font-orbitron text-2xl font-bold text-white tracking-wider flex items-center gap-3">
+                    <i class="fa-solid fa-camera text-zero-accent"></i>
+                    <span>GALÉRIA & RP PILLANATOK</span>
+                </h2>
+                <span class="text-xs text-gray-400">Pillanatképek az életről</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="group relative rounded-xl overflow-hidden border border-zero-border bg-zero-card h-52 cursor-pointer" onclick="zoomImage('https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=1200&q=80', 'Flotta Konvoj')">
+                    <img src="https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=800&q=80" alt="Convoy" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-80 group-hover:opacity-100">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent p-4 flex flex-col justify-end">
+                        <span class="text-xs text-zero-accent font-semibold font-orbitron">FLOTTA KONVOJ</span>
+                        <h4 class="text-sm font-bold text-white">Éjszakai Őrjárat Los Santosban</h4>
+                    </div>
+                </div>
+
+                <div class="group relative rounded-xl overflow-hidden border border-zero-border bg-zero-card h-52 cursor-pointer" onclick="zoomImage('https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=1200&q=80', 'Belső Stratégiai Megbeszélés')">
+                    <img src="https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=800&q=80" alt="Meeting" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-80 group-hover:opacity-100">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent p-4 flex flex-col justify-end">
+                        <span class="text-xs text-zero-accent font-semibold font-orbitron">TÁRGYALÁS</span>
+                        <h4 class="text-sm font-bold text-white">Belső Stratégiai Megbeszélés</h4>
+                    </div>
+                </div>
+
+                <div class="group relative rounded-xl overflow-hidden border border-zero-border bg-zero-card h-52 cursor-pointer" onclick="zoomImage('https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=1200&q=80', 'ZERO Bázis & Garázs')">
+                    <img src="https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=800&q=80" alt="HQ" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-80 group-hover:opacity-100">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent p-4 flex flex-col justify-end">
+                        <span class="text-xs text-zero-accent font-semibold font-orbitron">FŐHADISZÁLLÁS</span>
+                        <h4 class="text-sm font-bold text-white">ZERO Bázis & Garázs</h4>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="relative z-10 border-t border-zero-border bg-zero-bg mt-12 py-8 px-4 text-center">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500">
+            <div class="flex items-center gap-2">
+                <span class="font-orbitron font-bold text-zero-accent">Z-E-R-O</span>
+                <span>— Galaxy RP Szindikátus</span>
+            </div>
+            <div>
+                &copy; 2026 ZERO Faction. Minden jog fenntartva.
+            </div>
+            <div class="flex items-center gap-4 text-gray-400">
+                <button onclick="openModal('rulesModal')" class="hover:text-zero-accent transition-colors">Szabályzat</button>
+                <button onclick="openModal('applyModal')" class="hover:text-zero-accent transition-colors">Jelentkezés</button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODAL 1: Character Detail Modal -->
+    <div id="charModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="bg-zero-card border border-zero-border rounded-xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl relative">
+            <button onclick="closeModal('charModal')" class="absolute top-4 right-4 text-gray-400 hover:text-white w-8 h-8 rounded-lg bg-black/50 border border-zero-border flex items-center justify-center transition-all">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="p-6 border-b border-zero-border bg-gradient-to-r from-black/80 to-transparent flex items-center gap-4">
+                <div class="w-16 h-16 rounded-lg bg-black border border-zero-accent flex items-center justify-center text-3xl text-zero-accent shadow-[0_0_15px_rgba(212,175,55,0.3)] cursor-pointer overflow-hidden" id="modalAvatarBox" onclick="zoomCurrentAvatar()" title="Kattints a nagyításhoz">
+                    <i class="fa-solid fa-user-ninja" id="modalDefaultIcon"></i>
+                    <img src="" id="modalAvatarImg" class="w-full h-full object-cover hidden" alt="Avatar">
+                </div>
+                <div>
+                    <span id="charRoleBadge" class="text-xs font-bold px-2.5 py-0.5 rounded uppercase tracking-wider"></span>
+                    <h3 id="charName" class="font-orbitron text-2xl font-black text-white mt-1"></h3>
+                </div>
+            </div>
+
+            <div class="flex border-b border-zero-border bg-black/40 px-6 gap-6 text-sm font-semibold">
+                <button onclick="switchTab('tabOverview')" id="tabOverviewBtn" class="py-3 text-zero-accent border-b-2 border-zero-accent transition-all">Profil & Bio</button>
+                <button onclick="switchTab('tabOoc')" id="tabOocBtn" class="py-3 text-gray-400 border-b-2 border-transparent hover:text-white transition-all">OOC / Discord</button>
+            </div>
+
+            <div class="p-6">
+                <div id="tabOverview" class="space-y-4">
+                    <div>
+                        <h4 class="text-xs uppercase text-gray-400 font-semibold tracking-wider mb-1">IC Háttértörténet & Profil</h4>
+                        <p id="charBio" class="text-sm text-gray-300 leading-relaxed bg-black/40 p-4 rounded-lg border border-zero-border/50"></p>
+                    </div>
+                </div>
+
+                <div id="tabOoc" class="space-y-4 hidden">
+                    <div class="p-4 rounded-lg bg-black/40 border border-zero-border flex items-center justify-between">
+                        <div>
+                            <span class="text-xs text-gray-400 uppercase font-semibold">Alkotó Discord Elérhetősége</span>
+                            <div id="charDiscord" class="text-lg font-orbitron font-bold text-indigo-400 mt-1"></div>
+                        </div>
+                        <button onclick="copyDiscord()" class="px-3 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold flex items-center gap-2 transition-all">
+                            <i class="fa-solid fa-copy"></i>
+                            <span id="copyBtnText">Másolás</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: Image Zoom Modal -->
+    <div id="imageZoomModal" class="fixed inset-0 z-[60] bg-black/90 backdrop-blur-lg hidden flex flex-col items-center justify-center p-4" onclick="closeModal('imageZoomModal')">
+        <button onclick="closeModal('imageZoomModal')" class="absolute top-6 right-6 text-gray-400 hover:text-white text-2xl w-10 h-10 rounded-full bg-black/60 border border-zero-border flex items-center justify-center transition-all">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <div class="max-w-4xl max-h-[80vh] p-2 bg-zero-card border border-zero-accent/50 rounded-2xl shadow-[0_0_50px_rgba(212,175,55,0.3)] flex items-center justify-center overflow-hidden" onclick="event.stopPropagation()">
+            <img id="zoomedImage" src="" alt="Zoomed View" class="max-w-full max-h-[75vh] object-contain rounded-xl">
+        </div>
+        <p id="zoomedImageCaption" class="text-zero-accent font-orbitron text-sm font-bold mt-4 tracking-wider"></p>
+    </div>
+
+    <!-- MODAL 3: Rules Modal -->
+    <div id="rulesModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="bg-zero-card border border-zero-border rounded-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative p-6">
+            <button onclick="closeModal('rulesModal')" class="absolute top-4 right-4 text-gray-400 hover:text-white w-8 h-8 rounded-lg bg-black/50 border border-zero-border flex items-center justify-center transition-all">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="flex items-center gap-3 border-b border-zero-border pb-4 mb-6">
+                <i class="fa-solid fa-shield-halved text-2xl text-zero-accent"></i>
+                <div>
+                    <h3 class="font-orbitron text-xl font-bold text-white">ZERO FRAKCIÓSZABÁLYZAT</h3>
+                    <p class="text-xs text-gray-400">Kötelező érvényű szabályzat minden frakciótag számára</p>
+                </div>
+            </div>
+
+            <div class="space-y-4 text-sm text-gray-300">
+                <div class="p-4 rounded-lg bg-black/40 border border-zero-border">
+                    <div class="flex items-center gap-2 text-zero-accent font-orbitron font-bold text-sm mb-1">
+                        <i class="fa-brands fa-discord"></i>
+                        <span>1. DISCORD & CHAT HASZNÁLAT</span>
+                    </div>
+                    <ul class="text-xs leading-relaxed text-gray-300 space-y-1 pl-5 list-disc">
+                        <li>A szobákat megfelelően használd, a reakciókat is rendeltetésszerűen tedd le!</li>
+                        <li><strong>Ne spamelj</strong>, mert törölni utána rohadt sok meló!</li>
+                    </ul>
+                </div>
+
+                <div class="p-4 rounded-lg bg-black/40 border border-zero-border">
+                    <div class="flex items-center gap-2 text-zero-accent font-orbitron font-bold text-sm mb-1">
+                        <i class="fa-solid fa-users"></i>
+                        <span>2. OOC VISZONY ÉS IC RANGSZERKEZET</span>
+                    </div>
+                    <ul class="text-xs leading-relaxed text-gray-300 space-y-1 pl-5 list-disc">
+                        <li><strong>Discordon (OOC):</strong> Minden ember egyenlő, nincsenek rangok ("hogy én vagyok a főnököd").</li>
+                        <li><strong>Játékban (IC):</strong> Mindenki a rangjának megfelelően viselkedjen! Pl. ne üssétek a főnököt meg ilyenek. Az újoncokat lehet szívatni, de ők nem szájalhatnak vissza.</li>
+                    </ul>
+                </div>
+
+                <div class="p-4 rounded-lg bg-black/40 border border-zero-border">
+                    <div class="flex items-center gap-2 text-rose-400 font-orbitron font-bold text-sm mb-1">
+                        <i class="fa-solid fa-ban"></i>
+                        <span>3. TISZTELET ÉS VISELKEDÉS MAGATARTÁS</span>
+                    </div>
+                    <ul class="text-xs leading-relaxed text-gray-300 space-y-1.5 pl-5 list-disc">
+                        <li><strong>Publikus helyszíneken:</strong> Ahol playerek láthatnak minket, <span class="text-rose-400 font-bold">NINCS</span> egymásra fegyverfogás és egymás ütögetése! (Ha nem bírsz magaddal, hívd félre, de csak a HQ-n vagy elzárt helyszínen, ahol csak mi vagyunk.)</li>
+                        <li><strong>Frakciótárs tisztelete:</strong> Poénkodni szabad, de normálisan beszéljetek egymással! "Figyelj már te dagadt, gurulj már ide" belefér, de <strong>anyázás és trágárság nem megengedett!</strong></li>
+                        <li><strong>Bajtársiasság:</strong> Mindenkiért kiállunk a frakcióban! Nincs olyan, hogy ott hagyunk valakit a bajban.</li>
+                    </ul>
+                </div>
+
+                <div class="p-4 rounded-lg bg-black/40 border border-rose-900/50">
+                    <div class="flex items-center gap-2 text-rose-500 font-orbitron font-bold text-sm mb-1">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <span>4. WARN RENDSZER & ELBOCSÁTÁS</span>
+                    </div>
+                    <p class="text-xs leading-relaxed text-gray-300 mb-2">
+                        <strong>3 WARN után elbocsátásra kerülsz!</strong> (2 orbitálisan nagy hibázás után a következőnél már azzal játszol, hogy kiesel a frakcióból).
+                    </p>
+                    <p class="text-xs leading-relaxed text-gray-400 border-l-2 border-rose-500 pl-3 py-1">
+                        Itt nagyon durva és extrém dolgokat kell elkövetned hogy kapj valamit (pl. folyamatos parancsmegszegés, frakció tekintélyét csorbító viselkedés, nonozás, hatalmas szabályzatszegés ami miatt megítélik a frakciót). Nem kapsz warnt ha 1x elrontasz valamit, csak ha folyamatos és már volt róla szó!
+                    </p>
+                </div>
+
+                <div class="p-4 rounded-lg bg-black/40 border border-zero-border">
+                    <div class="flex items-center gap-2 text-zero-accent font-orbitron font-bold text-sm mb-1">
+                        <i class="fa-solid fa-shirt"></i>
+                        <span>5. ÖLTÖZET ÉS MASZK VISELET</span>
+                    </div>
+                    <ul class="text-xs leading-relaxed text-gray-300 space-y-1 pl-5 list-disc">
+                        <li>Normális öltözet és minden helyzetnek megfelelő ruhák viselete (pl. nincs tejszedés öltönyben, vagy bányászat úszósapkában és békatallpal). Minden melónak van NPC-je, ott átöltözöl és vissza.</li>
+                        <li><strong>Akciós szettek:</strong> Akcióknál mindig a megfelelő szettet viseld! Ha a fekete akciós szett kell, akkor azt vedd fel.</li>
+                        <li><strong>Maszkhasználat:</strong> Ne vegyünk fel maszkot, csak ha illegálkodunk vagy az RP úgy kívánja! Motelnál inkább maszk nélkül legyünk.</li>
+                    </ul>
+                </div>
+
+                <div class="p-4 rounded-lg bg-black/40 border border-zero-border">
+                    <div class="flex items-center gap-2 text-emerald-400 font-orbitron font-bold text-sm mb-1">
+                        <i class="fa-solid fa-crosshairs"></i>
+                        <span>6. AKCIÓK & ÜZLETKÖTÉS PROTOKOLL</span>
+                    </div>
+                    <ul class="text-xs leading-relaxed text-gray-300 space-y-1.5 pl-5 list-disc">
+                        <li><strong>Irányítás:</strong> Akcióknál mindig 2 ember irányíthat: <em>Akcióparancsnok + Brains</em>. Ha ők kiesnek, válaszatok 1 embert. Mindenki feltétel nélkül azt csinálja amit mondanak — <strong>inkább együtt bukjunk, mint külön formációt bontva!</strong></li>
+                        <li><strong>Üzletkötés:</strong> Üzletnél a <em>Brains</em> beszél vagy az, aki kötötte az üzletet. Mindenki más ne szóljon közbe feleslegesen!</li>
+                        <li><strong>Komolyság:</strong> Komoly helyzeteket ne vicceljünk el!</li>
+                        <li><strong>Diszkréció:</strong> Nyilvános helyen nem beszélünk illegális dolgokról!</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 4: Recruitment Application Simulator -->
+    <div id="applyModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="bg-zero-card border border-zero-border rounded-xl max-w-xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative p-6">
+            <button onclick="closeModal('applyModal')" class="absolute top-4 right-4 text-gray-400 hover:text-white w-8 h-8 rounded-lg bg-black/50 border border-zero-border flex items-center justify-center transition-all">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="text-center mb-6">
+                <div class="w-12 h-12 rounded-full bg-zero-accent/10 border border-zero-accent text-zero-accent flex items-center justify-center text-xl mx-auto mb-3">
+                    <i class="fa-solid fa-user-plus"></i>
+                </div>
+                <h3 class="font-orbitron text-xl font-bold text-white">TAGFELVÉTELI JELENTKEZÉS</h3>
+                <p class="text-xs text-gray-400 mt-1">Töltsd ki az alábbi lapot a jelentkezéshez!</p>
+            </div>
+
+            <form id="applyForm" onsubmit="handleApplySubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs uppercase font-semibold text-gray-400 mb-1">IC Név</label>
+                    <input type="text" required placeholder="pl. John Doe" class="w-full bg-black border border-zero-border rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-zero-accent">
+                </div>
+
+                <div>
+                    <label class="block text-xs uppercase font-semibold text-gray-400 mb-1">Discord azonosító (OOC)</label>
+                    <input type="text" required placeholder="pl. user#1234" class="w-full bg-black border border-zero-border rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-zero-accent">
+                </div>
+
+                <div>
+                    <label class="block text-xs uppercase font-semibold text-gray-400 mb-1">Miért szeretnél a ZERO-hoz csatlakozni?</label>
+                    <textarea rows="3" required placeholder="Rövid leírás az RP tapasztalataidról..." class="w-full bg-black border border-zero-border rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-zero-accent"></textarea>
+                </div>
+
+                <button type="submit" class="w-full py-3 rounded-lg bg-zero-accent text-black font-orbitron font-bold text-sm hover:bg-yellow-400 transition-all shadow-[0_0_15px_rgba(212,175,55,0.3)]">
+                    JELENTKEZÉS ELKÜLDÉSE
+                </button>
+            </form>
+
+            <div id="applySuccess" class="hidden text-center py-6 space-y-3">
+                <i class="fa-solid fa-circle-check text-4xl text-emerald-400"></i>
+                <h4 class="font-orbitron text-lg font-bold text-white">Jelentkezés sikeresen elküldve!</h4>
+                <p class="text-xs text-gray-400">Vezetőségünk hamarosan felveszi veled a kapcsolatot Discordon.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const rosterData = [
+            { id: 1, name: "Tom Cross", role: "Leader", roleClass: "role-leader", discord: "benoke97", image: "", bio:"Még nincs leírás"},
+            { id: 2, name: "Veronika Volkovna(Nika)", role: "Al leader", roleClass: "role-subleader", discord: "renipuff", image: "", bio:"Még nincs leírás" },
+            { id: 3, name: "Darius Jahlani Hayes", role: "Bizalmas", roleClass: "role-inner", discord: "botiirko", image: "", bio:"Még nincs leírás" },
+            { id: 4, name: "Zeki Malik Karatas", role: "Bizalmas", roleClass: "role-inner", discord: "milan0955", image: "zeki.png", bio:"Még nincs leírás" },
+            { id: 5, name: "Matteo Bianchi", role: "Bizalmas", roleClass: "role-inner", discord: "Matteo#0005", image: "", bio:"Még nincs leírás" },
+            { id: 6, name: "Daniel Brooks", role: "Tag", roleClass: "role-member", discord: "droxyka", image: "", bio:"Még nincs leírás" },
+            { id: 7, name: "Simonetto Fibi", role: "Tag", roleClass: "role-member", discord: "7_eazy_7", image: "", bio:"Még nincs leírás" },
+            { id: 8, name: "Logan McField", role: "Tag", roleClass: "role-member", discord: "kvcs_gergo23_08658", image: "", bio:"Még nincs leírás" },
+            { id: 9, name: "Viktor Yevgenyevich Sokolov", role: "Tag", roleClass: "role-member", discord: "thomass_official", image: "", bio:"Még nincs leírás"}
+        ];
+
+        const MAX_SLOTS = 12;
+        let soundEnabled = true;
+        let audioCtx = null;
+
+        function playSfx(freq = 440, type = 'sine', duration = 0.08) {
+            if (!soundEnabled) return;
+            try {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch (e) {}
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const icon = document.getElementById('soundIcon');
+            if (soundEnabled) {
+                icon.className = 'fa-solid fa-volume-high text-zero-accent';
+                playSfx(600, 'triangle', 0.1);
+            } else {
+                icon.className = 'fa-solid fa-volume-xmark text-gray-500';
+            }
+        }
+
+        function renderRoster(items) {
+            const grid = document.getElementById("rosterGrid");
+            grid.innerHTML = "";
+
+            items.forEach((m) => {
+                const card = document.createElement("div");
+                card.className = "bg-zero-card border border-zero-border hover:border-zero-accent rounded-xl overflow-hidden cursor-pointer transition-all duration-300 hover:-translate-y-1.5 glow-box-hover flex flex-col justify-between p-5 relative group";
+                card.onclick = () => {
+                    playSfx(520, 'sine');
+                    openCharModal(m);
+                };
+
+                const avatarHTML = m.image 
+                    ? `<img src="${m.image}" alt="${m.name}" class="w-full h-full object-cover rounded-lg">` 
+                    : `<i class="fa-solid fa-user-ninja"></i>`;
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-12 h-12 rounded-lg bg-black border border-zero-border group-hover:border-zero-accent flex items-center justify-center text-xl text-gray-400 group-hover:text-zero-accent transition-colors overflow-hidden hover:scale-110" title="Kattints a nagyításhoz" onclick="event.stopPropagation(); zoomMemberAvatar('${m.name}', '${m.image}')">
+                            ${avatarHTML}
+                        </div>
+                        <span class="text-xs font-bold px-2.5 py-1 rounded tracking-wider ${m.roleClass}">${m.role}</span>
+                    </div>
+
+                    <div>
+                        <h3 class="font-orbitron font-bold text-lg text-white group-hover:text-zero-accent transition-colors">${m.name}</h3>
+                    </div>
+
+                    <div class="mt-4 pt-4 border-t border-zero-border/60 flex items-center justify-between text-xs text-gray-400">
+                        <span class="flex items-center gap-1.5"><i class="fa-brands fa-discord text-indigo-400"></i> ${m.discord}</span>
+                        <i class="fa-solid fa-chevron-right text-gray-600 group-hover:text-zero-accent transition-colors"></i>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+
+            const currentCount = rosterData.length;
+            const filterValue = document.getElementById("roleFilter").value;
+            const searchVal = document.getElementById("searchInput").value.trim();
+
+            if (filterValue === "ALL" && !searchVal) {
+                const emptySlots = MAX_SLOTS - currentCount;
+                for (let i = 0; i < emptySlots; i++) {
+                    const emptyCard = document.createElement("div");
+                    emptyCard.className = "border-2 border-dashed border-zero-border/80 hover:border-zero-accent rounded-xl p-6 flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-300 bg-black/20 hover:bg-zero-accent/5 group min-h-[160px]";
+                    emptyCard.onclick = () => {
+                        playSfx(350, 'square');
+                        openModal('applyModal');
+                    };
+                    emptyCard.innerHTML = `
+                        <div class="w-10 h-10 rounded-full bg-zero-border/40 group-hover:bg-zero-accent/20 flex items-center justify-center text-gray-400 group-hover:text-zero-accent transition-all mb-2">
+                            <i class="fa-solid fa-plus"></i>
+                        </div>
+                        <h4 class="font-orbitron text-sm font-bold text-gray-300 group-hover:text-white">SZABAD SLOT</h4>
+                        <p class="text-xs text-gray-500 mt-1">Kattints a jelentkezéshez</p>
+                    `;
+                    grid.appendChild(emptyCard);
+                }
+            }
+        }
+
+        function filterRoster() {
+            const searchValue = document.getElementById("searchInput").value.toLowerCase();
+            const roleValue = document.getElementById("roleFilter").value;
+
+            const filtered = rosterData.filter(m => {
+                const matchesSearch = m.name.toLowerCase().includes(searchValue);
+                const matchesRole = roleValue === "ALL" || m.role === roleValue;
+                return matchesSearch && matchesRole;
+            });
+
+            renderRoster(filtered);
+        }
+
+        let currentActiveMember = null;
+
+        function openCharModal(member) {
+            currentActiveMember = member;
+            document.getElementById("charName").innerText = member.name;
+            document.getElementById("charRoleBadge").innerText = member.role;
+            document.getElementById("charRoleBadge").className = `text-xs font-bold px-2.5 py-0.5 rounded uppercase tracking-wider ${member.roleClass}`;
+            document.getElementById("charBio").innerText = member.bio;
+            document.getElementById("charDiscord").innerText = member.discord;
+
+            const modalDefaultIcon = document.getElementById("modalDefaultIcon");
+            const modalAvatarImg = document.getElementById("modalAvatarImg");
+
+            if (member.image) {
+                modalAvatarImg.src = member.image;
+                modalAvatarImg.classList.remove("hidden");
+                modalDefaultIcon.classList.add("hidden");
+            } else {
+                modalAvatarImg.classList.add("hidden");
+                modalDefaultIcon.classList.remove("hidden");
+            }
+
+            switchTab('tabOverview');
+            openModal('charModal');
+        }
+
+        function zoomCurrentAvatar() {
+            if (currentActiveMember) {
+                zoomMemberAvatar(currentActiveMember.name, currentActiveMember.image);
+            }
+        }
+
+        function zoomMemberAvatar(name, imgUrl) {
+            playSfx(600, 'triangle');
+            const targetSrc = imgUrl || 'logo.png'; 
+            zoomImage(targetSrc, name + ' Profilképe');
+        }
+
+        function zoomImage(src, caption) {
+            document.getElementById('zoomedImage').src = src;
+            document.getElementById('zoomedImageCaption').innerText = caption || '';
+            openModal('imageZoomModal');
+        }
+
+        function switchTab(tabId) {
+            playSfx(400, 'sine');
+            ['tabOverview', 'tabOoc'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+                document.getElementById(id + 'Btn').className = "py-3 text-gray-400 border-b-2 border-transparent hover:text-white transition-all";
+            });
+            document.getElementById(tabId).classList.remove('hidden');
+            document.getElementById(tabId + 'Btn').className = "py-3 text-zero-accent border-b-2 border-zero-accent transition-all";
+        }
+
+        function copyDiscord() {
+            if (!currentActiveMember) return;
+            playSfx(800, 'sine');
+            navigator.clipboard.writeText(currentActiveMember.discord);
+
+            const btnText = document.getElementById("copyBtnText");
+            btnText.innerText = "Másolva!";
+            setTimeout(() => {
+                btnText.innerText = "Másolás";
+            }, 2000);
+        }
+
+        function openModal(id) {
+            document.getElementById(id).classList.remove("hidden");
+        }
+
+        function closeModal(id) {
+            playSfx(300, 'sine');
+            document.getElementById(id).classList.add("hidden");
+            if(id === 'applyModal') {
+                document.getElementById('applyForm').reset();
+                document.getElementById('applyForm').classList.remove('hidden');
+                document.getElementById('applySuccess').classList.add('hidden');
+            }
+        }
+
+        function handleApplySubmit(e) {
+            e.preventDefault();
+            playSfx(700, 'triangle');
+
+            // --- ITT KEZDŐDIK A DISCORD WEBHOOK KÜLDÉS ---
+            const inputs = e.target.elements;
+            const icName = inputs[0].value;
+            const discordUser = inputs[1].value;
+            const reason = inputs[2].value;
+
+            // Cseréld ki a lenti linket a saját Discord Webhook linkedre:
+            const WEBHOOK_URL = "https://discord.com/api/webhooks/1566856143781892230/-W54yNoQQevR3xVXp7oVe4xJyMnE-IM5e3bRzW8CjP5jNu3FZ1GCm6lYdJb8B-XgZc6n"; 
+
+            if (WEBHOOK_URL !== "ITT_ADD_MEG_A_DISCORD_WEBHOOK_LINKEDET") {
+                const payload = {
+                    embeds: [{
+                        title: "📥 Új Frakció Jelentkezés",
+                        color: 13936439, // Aranyos/sárgás díszszín
+                        fields: [
+                            { name: "IC Név", value: icName, inline: true },
+                            { name: "Discord", value: discordUser, inline: true },
+                            { name: "Miért szeretne csatlakozni?", value: reason, inline: false }
+                        ],
+                        timestamp: new Date().toISOString()
+                    }]
+                };
+
+            
+                fetch(WEBHOOK_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                }).catch(err => console.error("Webhook hiba:", err));
+            }
+            // --- WEBHOOK KÜLDÉS VÉGE ---
+
+            document.getElementById('applyForm').classList.add('hidden');
+            document.getElementById('applySuccess').classList.remove('hidden');
+        }
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 1.5 + 0.5;
+                this.speedX = (Math.random() - 0.5) * 0.4;
+                this.speedY = (Math.random() - 0.5) * 0.4;
+                this.alpha = Math.random() * 0.5 + 0.2;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x < 0) this.x = canvas.width;
+                if (this.x > canvas.width) this.x = 0;
+                if (this.y < 0) this.y = canvas.height;
+                if (this.y > canvas.height) this.y = 0;
+            }
+
+            draw() {
+                ctx.fillStyle = `rgba(212, 175, 55, ${this.alpha})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            const count = Math.floor(window.innerWidth / 15);
+            for (let i = 0; i < count; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+
+        const cursorDot = document.getElementById('cursorDot');
+        window.addEventListener('mousemove', (e) => {
+            cursorDot.style.left = e.clientX + 'px';
+            cursorDot.style.top = e.clientY + 'px';
+        });
+
+        window.onload = function() {
+            resizeCanvas();
+            initParticles();
+            animateParticles();
+            renderRoster(rosterData);
+        };
+
+        window.onresize = function() {
+            resizeCanvas();
+            initParticles();
+        };
+    </script>
+</body>
+</html>
